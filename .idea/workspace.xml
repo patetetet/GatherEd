@@ -1,15 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="63f6bda5-e711-4126-95c8-f11a98cd4857" name="Changes" comment="" />
+    <list default="true" id="63f6bda5-e711-4126-95c8-f11a98cd4857" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/event_management/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/event_management/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/events/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/events/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/announcements/announcement_form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/announcements/announcement_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/events/event_confirm_delete.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/events/event_form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/events/event_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/events/event_participants.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/admin/reports/reports.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/announcements/announcement_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/auth/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/auth/register.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/dashboard/dashboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/events/event_detail.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/events/event_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/feedback/feedback_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/GatherEd.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/GatherEd.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GatherEd/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GatherEd/asgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GatherEd/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/event_management/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GatherEd/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GatherEd/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/event_management/wsgi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;JasCiely&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/JasCiely/GatherEd.git&quot;,
+    &quot;accountId&quot;: &quot;7829d218-4bed-4acf-a3b4-52553708970e&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="32x79C6ZvA3rDeMZWigt3QiykrZ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -18,10 +77,34 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Projects/GatherEd",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Ciely Palicte\OneDrive\Desktop\GatherEd\core" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Projects\GatherEd\templates\auth" />
+      <recent name="C:\Projects\GatherEd\templates\auth\auth" />
+      <recent name="C:\Projects\GatherEd\core\templates\components" />
+      <recent name="C:\Projects\GatherEd\core\templates\components\core" />
+      <recent name="C:\Projects\GatherEd\core\templates" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="GatherEd" type="Python.DjangoServer" factoryName="Django server">
       <module name="GatherEd" />
@@ -63,7 +146,10 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758350215598</updated>
-      <workItem from="1758350216936" duration="1000" />
+      <workItem from="1758350216936" duration="4727000" />
+      <workItem from="1758356796104" duration="10695000" />
+      <workItem from="1758407882195" duration="6727000" />
+      <workItem from="1758431505624" duration="747000" />
     </task>
     <servers />
   </component>

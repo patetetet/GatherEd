@@ -1,0 +1,24 @@
+/* In your static/css/email_confirmation.css */
+
+/* Icon Styling */
+.icon {
+    font-size: 4rem;
+    color: #5a7d9a; /* Use your website's primary color */
+    margin-bottom: 1rem;
+    animation: bounce-in 0.8s ease-out;
+}
+
+/* Keyframe animation for the icon */
+@keyframes bounce-in {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}

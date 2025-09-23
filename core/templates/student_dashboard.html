@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-calendar-check"></i> GatherEd
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'event_listing' %}">Events</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="{% url 'logout' %}" class="btn btn-login">Logout</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="dashboard-section">
+            <div class="dashboard-content">
+                <h1>Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+                <p class="section-description">Your central hub for event management and club activities.</p>
+                <div class="dashboard-cards-container">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-calendar-plus"></i> Your Registered Events</h3>
+                        {% if registered_events %}
+                            <ul>
+                                {% for registration in registered_events %}
+                                    <li>{{ registration.event.name }} on {{ registration.event.date|date:"F j, Y" }} at {{ registration.event.date|time:"P" }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>You are not registered for any upcoming events. <a href="{% url 'event_listing' %}">Browse events</a>.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo">GatherEd</div>
+                <p>Your central hub for school events.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#contact">Support</a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2025 GatherEd. All rights reserved.
+        </div>
+    </footer>
+</body>
+</html>

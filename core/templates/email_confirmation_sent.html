@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Email</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/email_confirmation.css' %}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <i class="fas fa-envelope-open-text icon"></i>
+            <h2>Check Your Inbox</h2>
+            <p>A confirmation email has been sent to your address. Please check your inbox and spam folder to confirm your account.</p>
+            <p>After confirming, you can return to the <a href="{% url 'login' %}">login page</a>.</p>
+        </div>
+    </div>
+</body>
+</html>
