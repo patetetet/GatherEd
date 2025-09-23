@@ -1,4 +1,3 @@
-# core/urls.py
 from django.urls import path
 from . import views
 
@@ -13,4 +12,5 @@ urlpatterns = [
     path('events/register/<int:event_id>/', views.event_register, name='event_register'),
     path('register/confirmation-sent/', views.email_confirmation_sent, name='email_confirmation_sent'),
     path('auth/callback/', views.auth_callback, name='auth_callback'),
+    path('events/create/', views.create_event, name='create_event'),
 ]
