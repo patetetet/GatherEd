@@ -110,6 +110,10 @@ LOGIN_URL = 'events:login'
 LOGIN_REDIRECT_URL = 'events:dashboard'
 LOGOUT_REDIRECT_URL = 'events:login'
 
+#Prints emails to console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'support@gathered.edu'  # Any dummy for console
+
 # Supabase Credentials
 SUPABASE_URL = 'https://gtcmvlgezpvbsrajhpwk.supabase.co'
 SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0Y212bGdlenB2YnNyYWpocHdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1OTc2MDYsImV4cCI6MjA3NDE3MzYwNn0.o7hEVyREUisQcrMKrnPjpJ63gVnwOO91bsNwItr3STw'
