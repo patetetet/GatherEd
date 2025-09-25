@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details - {{ event.name }}</title>
+    <title>Manage Events - GatherEd</title>
     {% load static %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/admin_css.css' %}">
+    <<link rel="stylesheet" href="../static/css/admin_css.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -46,7 +46,7 @@
 
         <main class="main-content">
             <header class="top-nav">
-                <h1 class="page-title">{{ event.name }} Details</h1>
+                <h1 class="page-title">Event Management</h1>
                 <div class="user-profile">
                     <span class="profile-name">Admin Name</span>
                     <i class="fas fa-user-circle"></i>
@@ -55,57 +55,37 @@
 
             <div class="full-width-card">
                 <div class="card-header">
-                    <h2>Event Information</h2>
-                    <a href="{% url 'track_attendance' event.id %}" class="btn btn-secondary"><i class="fas fa-qrcode"></i> Track Attendance</a>
-                </div>
-                <div class="event-details-grid">
-                    <div><strong>Date:</strong> {{ event.date }}</div>
-                    <div><strong>Time:</strong> {{ event.time }}</div>
-                    <div><strong>Location:</strong> {{ event.location }}</div>
-                    <div><strong>Organizer:</strong> {{ event.organizer }}</div>
-                    <div><strong>Description:</strong> {{ event.description }}</div>
-                </div>
-            </div>
-
-            <div class="full-width-card" style="margin-top: 30px;">
-                <div class="card-header">
-                    <h2>Registered Participants ({{ participants|length }})</h2>
+                    <h2>Event Listing</h2>
+                    <a href="{% url 'create_event' %}" class="btn btn-secondary"><i class="fas fa-plus"></i> Create New Event</a>
                 </div>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Student Name</th>
+                            <th>Event Name</th>
+                            <th>Date</th>
                             <th>School</th>
-                            <th>Attendance Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for participant in participants %}
+                        {% for event in events %}
                         <tr>
-                            <td>{{ participant.name }}</td>
-                            <td>{{ participant.school.name }}</td>
-                            <td><span class="status-badge {% if participant.is_present %}active{% else %}pending{% endif %}">{{ participant.attendance_status }}</span></td>
+                            <td>{{ event.name }}</td>
+                            <td>{{ event.date }}</td>
+                            <td>{{ event.school.name }}</td>
                             <td>
-                                <a href="#" class="action-btn edit-btn"><i class="fas fa-user-edit"></i> Edit</a>
-                                <a href="#" class="action-btn delete-btn"><i class="fas fa-user-times"></i> Remove</a>
+                                <a href="{% url 'event_details' event.id %}" class="action-btn view-btn"><i class="fas fa-eye"></i> View</a>
+                                <a href="{% url 'edit_event' event.id %}" class="action-btn edit-btn"><i class="fas fa-edit"></i> Edit</a>
+                                <a href="{% url 'delete_event' event.id %}" class="action-btn delete-btn"><i class="fas fa-trash"></i> Delete</a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center">No participants have registered for this event yet.</td>
+                            <td colspan="4" class="text-center">No events found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-
-            <div class="full-width-card" style="margin-top: 30px;">
-                <div class="card-header">
-                    <h2>Post-Event Feedback</h2>
-                    <a href="{% url 'view_feedback' event.id %}" class="btn btn-secondary"><i class="fas fa-comments"></i> View Feedback</a>
-                </div>
-                <p class="text-center">Feedback will be displayed here after the event has concluded.</p>
             </div>
         </main>
     </div>

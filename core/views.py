@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from supabase import create_client, Client
-from supabase_auth.errors import AuthApiError
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -11,8 +10,9 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
 from datetime import datetime, timedelta
+import re
 
-# Initialize Supabase clients for data storage only
+# Initialize Supabase clients for data storage
 supabase_public: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
 supabase_admin: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY)
 
@@ -28,70 +28,81 @@ def register(request):
         confirm_password = request.POST.get('confirm_password')
         name = request.POST.get('name')
         user_type = request.POST.get('user_type')
-        school_id = request.POST.get('school_id')
-        new_school_name = request.POST.get('new_school_name')
+        cit_id = request.POST.get('cit_id')
 
-        if not email or not password:
-            messages.error(request, 'Email and password are required.')
+        if not email or not password or not cit_id:
+            messages.error(request, 'All fields are required.')
             return render(request, 'register.html')
 
+        # Check password match before other validations
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
             return render(request, 'register.html')
 
-        if user_type == 'student' and not school_id:
-            messages.error(request, 'Student registration requires a school.')
-            return render(request, 'register.html')
-        elif user_type == 'administrator' and not new_school_name:
-            messages.error(request, 'Administrator registration requires a new school name.')
+        # Enforce @cit.edu email domain
+        if not email.endswith('@cit.edu'):
+            messages.error(request, 'Registration is limited to @cit.edu email addresses only.')
             return render(request, 'register.html')
 
-        try:
-            # PURE DJANGO: Check if user exists in Django's User model
-            if User.objects.filter(email=email).exists():
-                messages.error(request, 'A user with this email already exists.')
-                return render(request, 'register.html')
+        # Clean the input by removing any dashes
+        cleaned_cit_id = cit_id.replace('-', '')
 
-            # PURE DJANGO: Generate OTP and store in session
-            otp = str(random.randint(100000, 999999))
-            otp_expiry = datetime.now() + timedelta(minutes=10)
+        # Check if the cleaned ID is exactly 9 digits
+        if not cleaned_cit_id.isdigit() or len(cleaned_cit_id) != 9:
+            messages.error(request, 'The ID must be exactly 9 digits long.')
+            return render(request, 'register.html')
 
-            # Store temp data + OTP in session
-            request.session['temp_user_data'] = {
-                'name': name,
-                'user_type': user_type,
-                'school_id': school_id,
-                'new_school_name': new_school_name,
-                'email': email,
-                'password': password,
-            }
-            request.session['otp'] = otp
-            request.session['otp_expiry'] = otp_expiry.isoformat()
+        # Automatically format the ID with dashes for storage and check
+        formatted_cit_id = f"{cleaned_cit_id[:2]}-{cleaned_cit_id[2:6]}-{cleaned_cit_id[6:]}"
 
-            # PURE DJANGO: Send OTP email using Django's mail function
-            subject = 'GatherEd Account Confirmation'
-            html_message = render_to_string('emails/otp_email.html', {
-                'otp': otp,
-                'name': name,
-            })
-            plain_message = strip_tags(html_message)
-            send_mail(
-                subject,
-                plain_message,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                html_message=html_message,
-            )
+        # Check if user exists in Django's User model
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'A user with this email already exists.')
+            return render(request, 'register.html')
 
-            messages.success(request,
-                             f'Registration successful! A 6-digit OTP has been sent to {email}. Enter it to confirm.')
-            return redirect('verify_otp')
+        # Check for unique user ID in both Supabase tables using the formatted ID
+        student_id_check = supabase_public.table('students').select('cit_id').eq('cit_id',
+                                                                                 formatted_cit_id).execute().data
+        admin_id_check = supabase_public.table('admins').select('cit_id').eq('cit_id', formatted_cit_id).execute().data
 
-        except Exception as e:
-            messages.error(request, f'Unexpected error: {e}')
+        if student_id_check or admin_id_check:
+            messages.error(request, 'This ID is already registered.')
+            return render(request, 'register.html')
 
-    schools_response = supabase_public.table('schools').select('*').execute().data
-    return render(request, 'register.html', {'schools': schools_response})
+        # Generate OTP and store in session
+        otp = str(random.randint(100000, 999999))
+        otp_expiry = datetime.now() + timedelta(minutes=10)
+
+        request.session['temp_user_data'] = {
+            'name': name,
+            'user_type': user_type,
+            'email': email,
+            'password': password,
+            'cit_id': formatted_cit_id,  # Store the new formatted ID
+        }
+        request.session['otp'] = otp
+        request.session['otp_expiry'] = otp_expiry.isoformat()
+
+        # Send OTP email
+        subject = 'GatherEd Account Confirmation'
+        html_message = render_to_string('emails/otp_email.html', {
+            'otp': otp,
+            'name': name,
+        })
+        plain_message = strip_tags(html_message)
+        send_mail(
+            subject,
+            plain_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            html_message=html_message,
+        )
+
+        messages.success(request,
+                         f'Registration successful! A 6-digit OTP has been sent to {email}. Enter it to confirm.')
+        return redirect('verify_otp')
+
+    return render(request, 'register.html')
 
 
 def verify_otp(request):
@@ -127,54 +138,40 @@ def verify_otp(request):
             password = temp_user_data['password']
             name = temp_user_data.get('name')
             user_type = temp_user_data.get('user_type')
-            school_id = temp_user_data.get('school_id')
-            new_school_name = temp_user_data.get('new_school_name')
+            cit_id = temp_user_data.get('cit_id')
 
-            # PURE DJANGO: Create the Django user
+            # Create the Django user
             user = User.objects.create_user(
-                username=email,  # Use email as username
+                username=email,
                 email=email,
                 password=password,
             )
 
-            # Supabase for storage only: Create profile in your database tables using the admin client
+            # Create profile in Supabase with the new field
             if user_type == 'administrator':
-                if new_school_name and not school_id:
-                    school_result = supabase_admin.table('schools').insert({'name': new_school_name}).execute()
-                    if school_result.data:
-                        school_id = school_result.data[0]['id']
-                    else:
-                        raise Exception("Failed to create school in Supabase.")
-
-                if school_id:
-                    admin_result = supabase_admin.table('admins').insert({
-                        'id': str(user.pk),  # Use Django user's primary key as Supabase ID
-                        'name': name,
-                        'school_id': school_id
-                    }).execute()
-                    if not admin_result.data:
-                        raise Exception("Failed to insert admin profile.")
-                else:
-                    raise Exception("No school ID for administrator.")
+                admin_result = supabase_admin.table('admins').insert({
+                    'id': str(user.pk),
+                    'name': name,
+                    'cit_id': cit_id
+                }).execute()
+                if not admin_result.data:
+                    raise Exception("Failed to insert admin profile.")
 
             elif user_type == 'student':
-                if school_id:
-                    student_result = supabase_admin.table('students').insert({
-                        'id': str(user.pk),  # Use Django user's primary key as Supabase ID
-                        'name': name,
-                        'school_id': school_id
-                    }).execute()
-                    if not student_result.data:
-                        raise Exception("Failed to insert student profile.")
-                else:
-                    raise Exception("No school ID for student.")
+                student_result = supabase_admin.table('students').insert({
+                    'id': str(user.pk),
+                    'name': name,
+                    'cit_id': cit_id
+                }).execute()
+                if not student_result.data:
+                    raise Exception("Failed to insert student profile.")
 
             # Clear temp session data
             for key in ['otp', 'otp_expiry', 'temp_user_data']:
                 request.session.pop(key, None)
 
             messages.success(request, 'Account confirmed and profile created! You can now log in.')
-            return redirect('login')
+            return redirect('login_view')
 
         except Exception as e:
             messages.error(request, f'Confirmation failed: {str(e)}')
@@ -191,15 +188,12 @@ def login_view(request):
             messages.error(request, 'Email and password are required.')
             return render(request, 'login.html')
 
-        # PURE DJANGO: Authenticate using Django's system
         user = authenticate(request, username=email, password=password)
 
         if user is not None:
             login(request, user)
-            request.session['user_id'] = str(user.pk)  # Store Django user ID in session
 
             try:
-                # Use Django user ID to find Supabase profile
                 admin_check = supabase_public.table('admins').select('id').eq('id', str(user.pk)).limit(
                     1).execute().data
                 if admin_check:
@@ -211,10 +205,10 @@ def login_view(request):
                     return redirect('student_dashboard')
             except Exception as e:
                 messages.error(request, f"Error checking user profile: {e}")
-                return redirect('login')
+                return redirect('login_view')
 
             messages.error(request, "User profile not found. Contact support.")
-            return redirect('login')
+            return render(request, 'login.html')
         else:
             messages.error(request, "Invalid email or password.")
             return render(request, 'login.html')
@@ -229,7 +223,6 @@ def logout_view(request):
     return redirect('index')
 
 
-# All other views now use Django's auth system to get the user ID
 @login_required
 def student_dashboard(request):
     user_id = str(request.user.pk)
@@ -238,7 +231,6 @@ def student_dashboard(request):
         announcements = supabase_public.table('announcements').select('*').execute().data
         registrations = supabase_public.table('event_registrations').select('*, events(*)').eq('user_id',
                                                                                                user_id).execute().data
-
         context = {
             'events': events,
             'announcements': announcements,
@@ -257,15 +249,13 @@ def admin_dashboard(request):
         admin_check = supabase_public.table('admins').select('id').eq('id', user_id).execute().data
         if not admin_check:
             messages.error(request, "Access denied.")
-            return redirect('login')
+            return redirect('login_view')
 
-        schools = supabase_admin.table('schools').select('*').execute().data
-        events = supabase_admin.table('events').select('*').execute().data
-        announcements = supabase_admin.table('announcements').select('*').execute().data
-        feedbacks = supabase_admin.table('feedbacks').select('*').execute().data
+        events = supabase_public.table('events').select('*').execute().data
+        announcements = supabase_public.table('announcements').select('*').execute().data
+        feedbacks = supabase_public.table('feedbacks').select('*').execute().data
 
         return render(request, 'admin_dashboard.html', {
-            'schools': schools,
             'events': events,
             'announcements': announcements,
             'feedbacks': feedbacks,
@@ -284,7 +274,7 @@ def event_register(request, event_id):
         if existing:
             messages.info(request, "You are already registered.")
         else:
-            insert_result = supabase_public.table('event_registrations').insert(
+            insert_result = supabase_admin.table('event_registrations').insert(
                 {'user_id': user_id, 'event_id': event_id}).execute()
             if not insert_result.data:
                 raise Exception(f"Registration insert failed: {getattr(insert_result, 'error', 'Unknown error')}")
@@ -310,13 +300,12 @@ def create_event(request):
     user_id = str(request.user.pk)
     if request.method == 'POST':
         try:
-            admin_school_result = supabase_public.table('admins').select('school_id').eq('id',
-                                                                                         user_id).single().execute()
-            if admin_school_result.error or not admin_school_result.data:
-                messages.error(request, "Admin school not found.")
+            # Check if the user is an admin
+            admin_check = supabase_public.table('admins').select('id').eq('id', user_id).execute().data
+            if not admin_check:
+                messages.error(request, "Access denied.")
                 return redirect('admin_dashboard')
 
-            admin_school = admin_school_result.data
             title = request.POST.get('title')
             description = request.POST.get('description')
             date = request.POST.get('date')
@@ -328,8 +317,7 @@ def create_event(request):
             insert_result = supabase_admin.table('events').insert({
                 'title': title,
                 'description': description,
-                'date': date,
-                'school_id': admin_school['school_id']
+                'date': date
             }).execute()
             if not insert_result.data:
                 raise Exception(f"Event creation failed: {getattr(insert_result, 'error', 'Unknown error')}")

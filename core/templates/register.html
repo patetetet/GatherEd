@@ -29,18 +29,9 @@
                         <option value="administrator">Administrator</option>
                     </select>
                 </div>
-                <div id="school-select-group" class="form-group" style="display: none;">
-                    <label for="school_id">Select Your School</label>
-                    <select id="school_id" name="school_id">
-                        <option value="" disabled selected>Select your school</option>
-                        {% for school in schools %}
-                        <option value="{{ school.id }}">{{ school.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div id="new-school-group" class="form-group" style="display: none;">
-                    <label for="new_school_name">New School Name</label>
-                    <input type="text" id="new_school_name" name="new_school_name" placeholder="E.g., University of GatherEd">
+                <div class="form-group" id="cit-id-group" style="display:none;">
+                    <label id="cit-id-label" for="cit_id"></label>
+                    <input type="text" id="cit_id" name="cit_id" placeholder="00-0000-000" required>
                 </div>
                 <div class="form-group">
                     <label for="name">Full Name</label>
@@ -48,7 +39,7 @@
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="john.doe@school.edu" required>
+                    <input type="email" id="email" name="email" placeholder="john.doe@cit.edu" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
@@ -111,27 +102,20 @@
 
             // Dynamic form fields based on user type
             const userTypeSelect = document.getElementById('user_type');
-            const schoolSelectGroup = document.getElementById('school-select-group');
-            const schoolIdInput = document.getElementById('school_id');
-            const newSchoolGroup = document.getElementById('new-school-group');
-            const newSchoolInput = document.getElementById('new_school_name');
+            const citIdGroup = document.getElementById('cit-id-group');
+            const citIdLabel = document.getElementById('cit-id-label');
+            const citIdInput = document.getElementById('cit_id');
 
             userTypeSelect.addEventListener('change', function() {
+                citIdGroup.style.display = 'block';
                 if (this.value === 'administrator') {
-                    schoolSelectGroup.style.display = 'none';
-                    schoolIdInput.removeAttribute('required');
-                    newSchoolGroup.style.display = 'block';
-                    newSchoolInput.setAttribute('required', 'required');
+                    citIdLabel.textContent = 'Employee ID';
+                    citIdInput.placeholder = '00-0000-000';
                 } else if (this.value === 'student') {
-                    schoolSelectGroup.style.display = 'block';
-                    schoolIdInput.setAttribute('required', 'required');
-                    newSchoolGroup.style.display = 'none';
-                    newSchoolInput.removeAttribute('required');
+                    citIdLabel.textContent = 'Student ID';
+                    citIdInput.placeholder = '00-0000-000';
                 } else {
-                    schoolSelectGroup.style.display = 'none';
-                    schoolIdInput.removeAttribute('required');
-                    newSchoolGroup.style.display = 'none';
-                    newSchoolInput.removeAttribute('required');
+                    citIdGroup.style.display = 'none';
                 }
             });
         });
